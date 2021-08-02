@@ -29,11 +29,8 @@ gcloud iam service-accounts keys create key-file --iam-account=sa-name@project-i
 
 ## SSH Setup
 If you have an SSH key that works for the GCE instances in this project, you can upload it to cloudshell using the *Upload File* tool in the
-```
-<walkthrough-editor-spotlight
-cssSelector="mat-button-wrapper"> more tools menu
-</walkthrough-editor-spotlight>
-``` 
+<walkthrough-editor-spotlight cssSelector="mat-button-wrapper">more tools menu</walkthrough-editor-spotlight>
+ 
 
 ## Install the Cloud Ops Agent Ansible Role
 
