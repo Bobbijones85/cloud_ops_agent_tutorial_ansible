@@ -1,8 +1,18 @@
 # Cloud Ops Agent Ansible Tutorial
+This tutorial will provide you with a preconfigured environment for deploying the new unified [Cloud Ops Agent](https://github.com/GoogleCloudPlatform/google-cloud-ops-agents-ansible). Inside of the custom cloudshell environment, Ansible is already installed with the necessary inventory and configuration files to get started. To learn more about Ansible visit [docs.ansible.com](https://docs.ansible.com)
+
 ## Prerequisites
-In order to use Ansible to install the Cloud Ops Agent you must:
+
+**NOTE:** By default, this tutorial applies the Cloud Ops Agent to all hosts within a project which may incurr additional costs. See [Define Your Playbook](#define-your-playbook) below to change that behavior. 
+
+#### In order to use Ansible and other configuration automation tools to install the Cloud Ops Agent you must:
 1. Have a service account available for Ansible to query the inventory
-2. Be able to ssh to the systems and have escalation priviledges to install packages
+2. Be able to ssh to the systems and have sufficient escalation priviledges to install packages
+
+If these items are not the case for your project, consider creating a new test project following one of the [GCE Tutorials](https://cloud.google.com/compute/docs/tutorials) and see [SSH connections to Linux VMs](https://cloud.google.com/compute/docs/instances/ssh) for additional details.
+
+### Adding ssh keys
+If you have an SSH key that works for the GCE instances in this project, you can upload it inside of this ephemeral container via Cloud Editor by going to *File > Upload File*
 
 ## Service Account Setup 
 First, login to your gcp account within cloudshell, this ensures you're able to run the necessary commands
@@ -24,14 +34,41 @@ gcloud projects add-iam-policy-binding PROJECT_ID --member="serviceAccount:SERVI
 ```
 3. Create the key-file associated with the service account:
 ```bash
-gcloud iam service-accounts keys create key-file --iam-account=sa-name@project-id.iam.gserviceaccount.com
+gcloud iam service-accounts keys create /ansible/key-file --iam-account=sa-name@project-id.iam.gserviceaccount.com
 ```
 
-## SSH Setup
-If you have an SSH key that works for the GCE instances in this project, you can upload it to cloudshell using the *Upload File* tool in the
-<walkthrough-editor-spotlight cssSelector="mat-focus-indicator mat-menu-trigger mat-tooltip-trigger large mat-icon-button mat-button-base">more tools menu</walkthrough-editor-spotlight>
+## Configure your environment
+### Getting Bash ready
+Set the following ENV variables so Ansible can find the project and key-files neeed:
+```bash
+export GOOGLE_CLOUD_CRED=/ansible/key-file
+```
+```bash
+export GOOGLE_CLOUD_PROJECT=$(gcloud info --format='value(config.project)')
+```
+Create an ssh agent to simplify repeated connections via ansible, and add the SSH key
+```bash
+ssh-agent
+ssh-add PATH_TO_SSH_PUB_KEY
+```
 
-## Install the Cloud Ops Agent Ansible Role
+### Test your setup
+```bash
+cd /ansible
+```
+Run this inventory command to confirm you can see your GCP hosts:
+```bash
+ansible-inventory -i inventory.gcp.yaml --list-hosts
+```
+And then run this to confirm you can successfully connect to your hosts before modifying them:
+```bash
+ansible all -m setup -i inventory.gcp.yaml
+```
+
+If these commands return OK, you're ready to proceed!
+
+## Running the Cloud Ops Agent Role
+### Install the Cloud Ops Agent Ansible Role
 
 Install the Ansible role:
 ```bash
@@ -40,12 +77,42 @@ ansible-galaxy install git+https://github.com/GoogleCloudPlatform/google-cloud-o
 
 ### Define Your Playbook
 
-Part one instructions.
+A simple Ansible playbook, `example_playbook.yaml`:
+```yaml
+---
+- name: Add Cloud Ops Agent to hosts
+  hosts: all
+  become: true
+  roles:
+    - role: google-cloud-ops-agents-ansible
+      vars:
+        agent_type: monitoring
 
-### Part 2
+    - role: google-cloud-ops-agents-ansible
+      vars:
+        agent_type: logging
+```
+This playbook will target all hosts available to the inventory script, and will enable both logging and monitoring for the agent. You can change this by changing the host value to a specific group or system as you see fit.
 
-Part two instructions.
+For more variables see the [role's variable documentation](https://github.com/GoogleCloudPlatform/google-cloud-ops-agents-ansible#role-variables)
+
+### Run the playbook
+
+To execute the playbook, from your Cloud Terminal you can run:
+```bash
+ansible-playbook example_playbook.yaml -i inventory.gcp.yaml --user SSH_USER
+```
+Be sure to specify the `--user` with the username associated with the ssh key.
 
 ## Conclusion
 
-Done!
+If the playbook completes successfully, your instances should now have the Cloud Ops Agent installed! You can check out their metrics and logs from the new Observability page for each GCE instance. 
+
+### Cleanup
+
+You may want to cleanup the items used during this tutorial including:
+* Disabling the Cloud Ops Agent by setting each roles `package_state` variable to `absent` and running the playbook again
+* Deleting the [Service Account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#deleting_service_account_keys) if this was created as a one time use
+* Deleting the [Service Account](https://cloud.google.com/iam/docs/creating-managing-service-accounts#deleting) if this was created as a one time use
+
+
