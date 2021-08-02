@@ -3,7 +3,8 @@
 In order to use Ansible to install the Cloud Ops Agent you must:
 1. Have a service account available for Ansible to query the inventory
 2. Be able to ssh to the systems and have escalation priviledges to install packages
-### Service Account Setup 
+
+## Service Account Setup 
 First, login to your gcp account within cloudshell, this ensures you're able to run the necessary commands
 ```bash
 gcloud auth login
@@ -26,12 +27,10 @@ gcloud projects add-iam-policy-binding PROJECT_ID --member="serviceAccount:SERVI
 gcloud iam service-accounts keys create key-file --iam-account=sa-name@project-id.iam.gserviceaccount.com
 ```
 
-### SSH Key Setup
+## SSH Setup
 If you have an SSH key that works for the GCE instances in this project, you can upload it to cloudshell using the *Upload File* tool in the
-<walkthrough-editor-spotlight cssSelector="mat-button-wrapper">more tools menu</walkthrough-editor-spotlight>:
+<walkthrough-editor-spotlight cssSelector="mat-button-wrapper">more tools menu</walkthrough-editor-spotlight> :
 
-
-mat-button-wrapper
 ## Install the Cloud Ops Agent Ansible Role
 
 Install the Ansible role:
