@@ -13,14 +13,7 @@ If these items are not the case for your project, consider creating a new test p
 
 ### Adding ssh keys
 If you have an SSH key that works for the GCE instances in this project, you can upload it inside of this ephemeral container via Cloud Editor by going to *File > Upload File*
-## Add git repo
-Add the git repo to have the example files available
-```bash
-git clone https://github.com/kyleabenson/cloud_ops_agent_tutorial_ansible.git
-```
-```bash
-cd cloud_ops_agent_tutorial_ansible
-```
+
 ## Service Account Setup 
 First, login to your gcp account within cloudshell, this ensures you're able to run the necessary commands
 ```bash
