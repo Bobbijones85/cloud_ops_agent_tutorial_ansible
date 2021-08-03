@@ -1,8 +1,5 @@
 plugin: gcp_compute
-projects:
-- {{lookup('env','GOOGLE_CLOUD_PROJECT')}}
 auth_kind: serviceaccount
-service_account_file: {{ lookup('env','GOOGLE_CLOUD_CRED')}}
 keyed_groups:
   # Create groups from GCE labels
   - key: labels
