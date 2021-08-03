@@ -13,7 +13,14 @@ If these items are not the case for your project, consider creating a new test p
 
 ### Adding ssh keys
 If you have an SSH key that works for the GCE instances in this project, you can upload it inside of this ephemeral container via Cloud Editor by going to *File > Upload File*
-
+## Add git repo
+Add the git repo to have the example files available
+```bash
+git clone https://github.com/kyleabenson/cloud_ops_agent_tutorial_ansible.git
+```
+```bash
+cd cloud_ops_agent_tutorial_ansible
+```
 ## Service Account Setup 
 First, login to your gcp account within cloudshell, this ensures you're able to run the necessary commands
 ```bash
@@ -34,18 +41,15 @@ gcloud projects add-iam-policy-binding PROJECT_ID --member="serviceAccount:SERVI
 ```
 3. Create the key-file associated with the service account:
 ```bash
-gcloud iam service-accounts keys create /ansible/key-file --iam-account=sa-name@project-id.iam.gserviceaccount.com
+gcloud iam service-accounts keys create key-file --iam-account=sa-name@project-id.iam.gserviceaccount.com
 ```
 
 ## Configure your environment
-### Getting Bash ready
-Set the following ENV variables so Ansible can find the project and key-files neeed:
+Set the following ENV variable so Ansible can find the key file:
 ```bash
-export GOOGLE_CLOUD_CRED=/ansible/key-file
+export GCP_SERVICE_ACCOUNT_FILE=$HOME/key-file
 ```
-```bash
-export GOOGLE_CLOUD_PROJECT=$(gcloud info --format='value(config.project)')
-```
+
 Create an ssh agent to simplify repeated connections via ansible, and add the SSH key
 ```bash
 ssh-agent
@@ -53,9 +57,6 @@ ssh-add PATH_TO_SSH_PUB_KEY
 ```
 
 ### Test your setup
-```bash
-cd /ansible
-```
 Run this inventory command to confirm you can see your GCP hosts:
 ```bash
 ansible-inventory -i inventory.gcp.yaml --list-hosts
