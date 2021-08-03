@@ -15,7 +15,11 @@ If these items are not the case for your project, consider creating a new test p
 If you have an SSH key that works for the GCE instances in this project, you can upload it inside of this ephemeral container via Cloud Editor by going to *File > Upload File*
 
 ## Service Account Setup 
-First, login to your gcp account within cloudshell, this ensures you're able to run the necessary commands
+Confirm you are logged in:
+```bash
+ gcloud auth list
+ ```
+If not, login to your gcp account within cloudshell, this ensures you're able to run the necessary commands
 ```bash
 gcloud auth login
 ```
@@ -40,7 +44,7 @@ gcloud iam service-accounts keys create key-file --iam-account=sa-name@project-i
 ## Configure your environment
 Set the following ENV variable so Ansible can find the key file:
 ```bash
-export GCP_SERVICE_ACCOUNT_FILE=$HOME/key-file
+export GCP_SERVICE_ACCOUNT_FILE=$PWD/key-file
 ```
 Adjust the inventory file for the project you're using:
 ```bash
@@ -50,13 +54,15 @@ sed -i "s/ENTER_PROJECT_NAME/$GOOGLE_CLOUD_PROJECT/g" inventory.gcp.yaml
 Create an ssh agent to simplify repeated connections via ansible, and add the SSH key
 ```bash
 ssh-agent
+```
+```bash
 ssh-add PATH_TO_SSH_PUB_KEY
 ```
 
 ### Test your setup
 Run this inventory command to confirm you can see your GCP hosts:
 ```bash
-ansible-inventory -i inventory.gcp.yaml --list-hosts
+ansible-inventory all -i inventory.gcp.yaml --list
 ```
 And then run this to confirm you can successfully connect to your hosts before modifying them:
 ```bash
@@ -100,7 +106,7 @@ To execute the playbook, from your Cloud Terminal you can run:
 ```bash
 ansible-playbook example_playbook.yaml -i inventory.gcp.yaml --user SSH_USER
 ```
-Be sure to specify the `--user` with the username associated with the ssh key.
+**Tip** Be sure to specify the `--user` with the username associated with the ssh key.
 
 ## Conclusion
 
