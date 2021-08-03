@@ -49,6 +49,10 @@ Set the following ENV variable so Ansible can find the key file:
 ```bash
 export GCP_SERVICE_ACCOUNT_FILE=$HOME/key-file
 ```
+Adjust the inventory file for the project you're using:
+```bash
+sed -i "s/ENTER_PROJECT_NAME/$GOOGLE_CLOUD_PROJECT/g" inventory.gcp.yaml
+```
 
 Create an ssh agent to simplify repeated connections via ansible, and add the SSH key
 ```bash
