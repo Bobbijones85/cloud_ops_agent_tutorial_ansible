@@ -3,7 +3,9 @@ This tutorial will provide you with a preconfigured environment for deploying th
 
 ## Prerequisites
 
-**NOTE:** By default, this tutorial applies the Cloud Ops Agent to all hosts within a project which may incurr additional costs. See [Define Your Playbook](#define-your-playbook) below to change that behavior. 
+**NOTE:** By default, this tutorial applies the Cloud Ops Agent to all hosts within a project 
+
+which may incurr additional costs. See [Define Your Playbook](#define-your-playbook) below to change that behavior. 
 
 #### In order to use Ansible and other configuration automation tools to install the Cloud Ops Agent you must:
 1. Have a service account available for Ansible to query the inventory
